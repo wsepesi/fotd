@@ -92,7 +92,7 @@ def get_table_data(data, location="Eden Prairie"):
 
 def create_table(data, location="Eden Prairie", coords=(44.8547, -93.4708)):
     # Create a table
-    table = Table(title="Culvers Flavors of the Day close to " + location)
+    table = Table(title="Culvers Flavors of the Day Close to " + location)
 
     # Add columns (excluding 'hrs' and 'driveThruHrs')
     columns = ['location', 'flavor of the day', 'coordinates', 'distance']

@@ -12,7 +12,7 @@ def get_location_from_ip(ip):
 
     res = handler.getDetails(ip)
 
-    return res.city + res.region, _coords_string_to_list(res.loc)
+    return f'{res.city}, + {res.region}', _coords_string_to_list(res.loc)
 
 def get_html_template():
     html_template = """
