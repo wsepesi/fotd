@@ -75,6 +75,16 @@ def _handle_coords(coords):
 def _handle_flavor(flavor):
     return flavor if flavor else "Not specified"
 
+def get_table_data(data, location="Eden Prairie"):
+    table_data = []
+    for item in data:
+        table_data.append({
+            'location': item['city'] + ', ' + item['state'],
+            'flavor of the day': _handle_flavor(item['flavor']),
+            'coordinates': _handle_coords(item['coordinates'])
+        })
+    return table_data
+
 def create_table(data, location="Eden Prairie"):
     # Create a table
     table = Table(title="Flavors of the Day close to " + location)
@@ -99,6 +109,10 @@ def create_table(data, location="Eden Prairie"):
 def get_table_from_zip(zip='55347'):
     json_data = get_json_from_zip(zip)
     return create_table(parse_output(json_data))
+
+def get_data_from_zip(zip='55347'):
+    json_data = get_json_from_zip(zip)
+    return get_table_data(parse_output(json_data))
 
 # if __name__ == '__main__':
 #     location = '55347'
