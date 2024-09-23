@@ -1,8 +1,7 @@
 import requests
 
-from rich.console import Console
 from rich.table import Table
-from rich.align import Align
+from geopy.distance import distance
 
 def get_json_from_lat_long(lat, long, radius=40233, limit=10):
     url = 'https://www.culvers.com/api/locator/getLocations'
@@ -75,6 +74,12 @@ def _handle_coords(coords):
 def _handle_flavor(flavor):
     return flavor if flavor else "Not specified"
 
+def _flip_coords(coords):
+    return (coords[1], coords[0])
+
+def _handle_dist(dist):
+    return f"{dist:.2f} mi"
+
 def get_table_data(data, location="Eden Prairie"):
     table_data = []
     for item in data:
@@ -85,23 +90,22 @@ def get_table_data(data, location="Eden Prairie"):
         })
     return table_data
 
-def create_table(data, location="Eden Prairie"):
+def create_table(data, location="Eden Prairie", coords=(44.8547, -93.4708)):
     # Create a table
-    table = Table(title="Flavors of the Day close to " + location)
+    table = Table(title="Culvers Flavors of the Day close to " + location)
 
     # Add columns (excluding 'hrs' and 'driveThruHrs')
-    columns = ['location', 'flavor of the day', 'coordinates'] #, 'fotdSlug', 'coordinates']
+    columns = ['location', 'flavor of the day', 'coordinates', 'distance']
     for column in columns:
         table.add_column(column.capitalize(), style="black", no_wrap=True)
 
     # Add rows
     for item in data:
         table.add_row(
-            # item['description'],
             item['city'] + ', ' + item['state'],
             _handle_flavor(item['flavor']),
-            # item['fotdSlug'],
-            _handle_coords(item['coordinates'])
+            _handle_coords(item['coordinates']),
+            _handle_dist(distance(coords, _flip_coords(item['coordinates'])).miles)
         )
 
     return table
@@ -114,7 +118,10 @@ def get_data_from_zip(zip='55347'):
     json_data = get_json_from_zip(zip)
     return get_table_data(parse_output(json_data))
 
-# if __name__ == '__main__':
-#     location = '55347'
-#     json_data = get_json_from_zip(location)
-#     create_table(parse_output(json_data))
+def get_table_from_lat_long(lat=44.8547, long=-93.4708, loc_string="Eden Prairie"):
+    json_data = get_json_from_lat_long(lat, long)
+    return create_table(parse_output(json_data), location=loc_string, coords=(lat, long))
+
+def get_data_from_lat_long(lat=44.8547, long=-93.4708, loc_string="Eden Prairie"):
+    json_data = get_json_from_lat_long(lat, long)
+    return get_table_data(parse_output(json_data))
