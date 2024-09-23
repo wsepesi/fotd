@@ -29,6 +29,7 @@ def home():
     except Exception as e:
         print(f"Error getting location: {e}")
         location, coordinates = "Eden Prairie", [44.8547, -93.4708]
+        # location, coordinates = "Bozeman", [45.676998, -111.042931]
 
     if is_curl:
         table = get_table_from_lat_long(lat=coordinates[LAT], long=coordinates[LONG], loc_string=location)

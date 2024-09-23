@@ -3,7 +3,7 @@ import requests
 from rich.table import Table
 from geopy.distance import distance
 
-def get_json_from_lat_long(lat, long, radius=40233, limit=10):
+def get_json_from_lat_long(lat, long, radius=600000, limit=10):
     url = 'https://www.culvers.com/api/locator/getLocations'
     params = {
         'lat': lat,
@@ -21,7 +21,7 @@ def get_json_from_lat_long(lat, long, radius=40233, limit=10):
     response = requests.get(url, params=params, headers=headers)
     return response.json()
 
-def get_json_from_zip(location, radius=40233, limit=10):
+def get_json_from_zip(location, radius=1000000000, limit=10):
     url = 'https://www.culvers.com/api/locator/getLocations'
     params = {
         'location': location,
@@ -90,7 +90,7 @@ def get_table_data(data, location="Eden Prairie"):
         })
     return table_data
 
-def create_table(data, location="Eden Prairie", coords=(44.8547, -93.4708)):
+def create_table(data, location="Eden Prairie", coords=(45.676998, -111.042931)):
     # Create a table
     table = Table(title="Culvers Flavors of the Day Close to " + location)
 
