@@ -97,7 +97,7 @@ def create_table(data, location="Eden Prairie", coords=(45.676998, -111.042931))
     # Add columns (excluding 'hrs' and 'driveThruHrs')
     columns = ['location', 'flavor of the day', 'coordinates', 'distance']
     for column in columns:
-        table.add_column(column.capitalize(), style="black", no_wrap=True)
+        table.add_column(column.capitalize(), no_wrap=True)
 
     # Add rows
     for item in data:
