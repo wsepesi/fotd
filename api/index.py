@@ -9,10 +9,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return 'Hello, World!'
-
-@app.route('/fotd')
-def fotd():
     table = get_table_from_zip()
     centered_table = Columns([table], align="center", expand=True)
 
