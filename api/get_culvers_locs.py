@@ -146,13 +146,25 @@ def create_table(data, location="Eden Prairie", coords=(45.676998, -111.042931))
     
     return main_table
 
-def get_table_from_zip(zip='55347'):
+def get_table_from_zip(zip='55347', loc_string=None):
     json_data = get_json_from_zip(zip)
-    return create_table(parse_output(json_data))
+    parsed_data = parse_output(json_data)
 
-def get_data_from_zip(zip='55347'):
+    # Try to infer location from first result if not provided
+    if not loc_string and parsed_data:
+        loc_string = f"{parsed_data[0]['city']}, {parsed_data[0]['state']}"
+
+    # Get coordinates from first location for distance calculations
+    if parsed_data and len(parsed_data) > 0:
+        coords = _flip_coords(parsed_data[0]['coordinates'])
+    else:
+        coords = (44.8547, -93.4708)  # Default fallback
+
+    return create_table(parsed_data, location=loc_string or zip, coords=coords)
+
+def get_data_from_zip(zip='55347', loc_string=None):
     json_data = get_json_from_zip(zip)
-    return get_table_data(parse_output(json_data))
+    return get_table_data(parse_output(json_data), location=loc_string or zip)
 
 def get_table_from_lat_long(lat=44.8547, long=-93.4708, loc_string="Eden Prairie"):
     json_data = get_json_from_lat_long(lat, long)
