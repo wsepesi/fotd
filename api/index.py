@@ -3,7 +3,7 @@ from rich.console import Console
 from rich.columns import Columns
 
 from api.get_culvers_locs import get_table_from_lat_long, get_data_from_lat_long, get_table_from_zip, get_data_from_zip
-from api.utils import get_html_template, get_location_from_ip
+from api.utils import get_html_template, get_location_with_consensus
 
 app = Flask(__name__)
 
@@ -33,20 +33,23 @@ def home():
         location_string = f"ZIP {manual_zip}"
         use_zip_query = True
         query_location = manual_zip
+        is_confident = True  # User-provided location is always confident
     elif manual_loc:
         # User provided location string override
         location_string = manual_loc
         use_zip_query = True
         query_location = manual_loc
+        is_confident = True  # User-provided location is always confident
     else:
-        # Auto-detect from IP using lat/long
+        # Auto-detect from IP using lat/long with dual-provider consensus
         try:
-            location_string, coordinates = get_location_from_ip(user_ip)
+            location_string, coordinates, is_confident = get_location_with_consensus(user_ip)
             use_zip_query = False
         except Exception as e:
             print(f"Error getting location: {e}")
             location_string = "Eden Prairie, MN"
             coordinates = [44.8547, -93.4708]
+            is_confident = False
             use_zip_query = False
 
     if is_curl:
@@ -60,6 +63,10 @@ def home():
 
         console.print(centered_table)
 
+        # Add low-confidence warning if IP-based detection disagrees between providers
+        if not is_confident and not use_zip_query:
+            console.print("\n[dim]Location based on ISP routing. For accurate results, add ?zip=YOUR_ZIP[/dim]", justify="center")
+
         output = console.export_text(clear=False, styles=True)
         return output, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
@@ -69,4 +76,5 @@ def home():
             table_data = get_data_from_lat_long(lat=coordinates[LAT], long=coordinates[LONG], loc_string=location_string)
 
         html_template = get_html_template()
-        return render_template_string(html_template, table_data=table_data)
+        show_warning = not is_confident and not use_zip_query
+        return render_template_string(html_template, table_data=table_data, show_warning=show_warning)
