@@ -25,7 +25,7 @@ def get_json_from_lat_long(lat, long, radius=600000, limit=10):
     response = requests.get(url, params=params, headers=headers)
     return response.json()
 
-def get_json_from_zip(location, radius=1000000000, limit=10):
+def get_json_from_zip(location, radius=600000, limit=10):
     url = 'https://www.culvers.com/api/locator/getLocations'
     params = {
         'location': location,

@@ -12,10 +12,7 @@ def get_location_from_ip(ip):
 
     res = handler.getDetails(ip)
 
-    # Try to get postal code for more precise location
-    postal = getattr(res, 'postal', None)
-
-    return f'{res.city}, {res.region}', _coords_string_to_list(res.loc), postal
+    return f'{res.city}, {res.region}', _coords_string_to_list(res.loc)
 
 def get_html_template():
     html_template = """

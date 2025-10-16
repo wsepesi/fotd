@@ -39,22 +39,13 @@ def home():
         use_zip_query = True
         query_location = manual_loc
     else:
-        # Auto-detect from IP
+        # Auto-detect from IP using lat/long
         try:
-            location, coordinates, postal = get_location_from_ip(user_ip)
-
-            # Prefer postal code for more precision
-            if postal:
-                location_string = f"{location} (ZIP {postal})"
-                use_zip_query = True
-                query_location = postal
-            else:
-                location_string = location
-                use_zip_query = False
+            location_string, coordinates = get_location_from_ip(user_ip)
+            use_zip_query = False
         except Exception as e:
             print(f"Error getting location: {e}")
-            location = "Eden Prairie, MN"
-            location_string = location
+            location_string = "Eden Prairie, MN"
             coordinates = [44.8547, -93.4708]
             use_zip_query = False
 
